@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Content-Bot Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1c2733;
+            --bg-card: #243447;
+            --bg-hover: #2d3e50;
+            --accent-primary: #1da1f2;
+            --accent-secondary: #17bf63;
+            --accent-gradient: linear-gradient(135deg, #1da1f2 0%, #17bf63 100%);
+            --text-primary: #f7f9fa;
+            --text-secondary: #8899a6;
+            --text-muted: #657786;
+            --border-color: #38444d;
+            --success: #17bf63;
+            --warning: #ffad1f;
+            --error: #e0245e;
+            --info: #1da1f2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 2px solid var(--accent-primary);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.3);
+        }
+
+        .logo h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Main Layout */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Integration Status Grid */
+        .integrations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .integration-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .integration-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .integration-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .integration-card.connected .integration-icon {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .integration-card.disconnected .integration-icon {
+            background: rgba(113, 113, 122, 0.1);
+        }
+
+        .integration-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .integration-status {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .integration-card.connected .integration-status {
+            color: var(--success);
+        }
+
+        .integration-card.disconnected .integration-status {
+            color: var(--text-muted);
+        }
+
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            padding: 1.25rem;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .action-btn .icon {
+            font-size: 1.5rem;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Content Generator */
+        .generator-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Logs Panel */
+        .logs-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            max-height: calc(100vh - 200px);
+        }
+
+        .log-entry {
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-secondary);
+            font-size: 0.85rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .log-message {
+            flex: 1;
+        }
+
+        .log-entry.success {
+            border-left: 3px solid var(--success);
+        }
+
+        .log-entry.error {
+            border-left: 3px solid var(--error);
+        }
+
+        .log-entry.info {
+            border-left: 3px solid var(--info);
+        }
+
+        .log-entry.warning {
+            border-left: 3px solid var(--warning);
+        }
+
+        /* Preview Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Content Preview */
+        .content-preview {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .content-preview h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .content-preview .content-text {
+            white-space: pre-wrap;
+            line-height: 1.8;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🤖</div>
+            <h1>Auto-Content-Bot</h1>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Connecting...</span>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="content-area">
+            <!-- Integration Status -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>🔌 Integrations</h2>
+                    <span id="demoModeLabel"
+                        style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--warning); color: black; border-radius: 12px;">DEMO
+                        MODE</span>
+                </div>
+                <div class="card-body">
+                    <div class="integrations-grid" id="integrationsGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>⚡ Quick Actions</h2>
+                </div>
+                <div class="card-body">
+                    <div class="actions-grid">
+                        <button class="action-btn primary" onclick="runPipeline(true)" id="runDemoBtn">
+                            <span class="icon">🎮</span>
+                            Run Demo Pipeline
+                        </button>
+                        <button class="action-btn secondary" onclick="runPipeline(false)" id="runProdBtn">
+                            <span class="icon">🚀</span>
+                            Run Production
+                        </button>
+                        <button class="action-btn secondary" onclick="showGenerator()">
+                            <span class="icon">✨</span>
+                            Generate Content
+                        </button>
+                        <button class="action-btn secondary" onclick="clearLogs()">
+                            <span class="icon">🧹</span>
+                            Clear Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Generator -->
+            <div class="card" id="generatorCard" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2>✨ Content Generator</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Content Type</label>
+                        <select class="form-control" id="contentType">
+                            <option value="blog_post">Blog Post</option>
+                            <option value="case_study">Case Study</option>
+                            <option value="social_post">Social Media Post</option>
+                            <option value="product_description">Product Description</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="platformGroup" style="display: none;">
+                        <label>Platform</label>
+                        <select class="form-control" id="platform">
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Twitter">Twitter/X</option>
+                            <option value="Facebook">Facebook</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Request Details</label>
+                        <textarea class="form-control" id="requestText"
+                            placeholder="Describe what content you need...&#10;&#10;Example: Create content for our new eco-friendly water bottle. Price: $25. Target audience: health-conscious millennials."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateContent()" id="generateBtn">
+                        Generate Content
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Panel -->
+        <div class="card logs-container">
+            <div class="card-header">
+                <h2>📋 Execution Logs</h2>
+                <span id="logCount" style="font-size: 0.75rem; color: var(--text-muted);">0 entries</span>
+            </div>
+            <div class="logs-list" id="logsList">
+                <div class="log-entry info">
+                    <span class="log-time">--:--:--</span>
+                    <span class="log-message">Waiting for activity...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Content Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📄 Generated Content</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <!-- Content inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" onclick="publishContent()" id="publishBtn">
+                    Publish to WordPress
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentContent = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStatus();
+            setInterval(fetchStatus, 5000);
+
+            document.getElementById('contentType').addEventListener('change', (e) => {
+                document.getElementById('platformGroup').style.display =
+                    e.target.value === 'social_post' ? 'block' : 'none';
+            });
+        });
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                updateStatusBadge(data.status);
+                updateIntegrations(data.integrations);
+                updateDemoMode(data.demo_mode);
+                updateLogs(data.logs);
+            } catch (error) {
+                updateStatusBadge('offline');
+            }
+        }
+
+        function updateStatusBadge(status) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            if (status === 'online') {
+                dot.style.background = 'var(--success)';
+                text.textContent = 'Online';
+            } else {
+                dot.style.background = 'var(--error)';
+                text.textContent = 'Offline';
+            }
+        }
+
+        function updateIntegrations(integrations) {
+            const grid = document.getElementById('integrationsGrid');
+            const icons = {
+                openai: '🧠',
+                wordpress: '📝',
+                gmail: '📧',
+                linkedin: '🔗',
+                twitter: '🐦'
+            };
+
+            grid.innerHTML = Object.entries(integrations).map(([key, value]) => `
+                <div class="integration-card ${value.connected ? 'connected' : 'disconnected'}">
+                    <div class="integration-icon">${icons[key] || '❓'}</div>
+                    <div class="integration-name">${value.name}</div>
+                    <div class="integration-status">
+                        ${value.connected ? '● Connected' : '○ Mock Mode'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateDemoMode(isDemo) {
+            const label = document.getElementById('demoModeLabel');
+            if (isDemo) {
+                label.textContent = 'DEMO MODE';
+                label.style.background = 'var(--warning)';
+            } else {
+                label.textContent = 'PRODUCTION';
+                label.style.background = 'var(--success)';
+            }
+        }
+
+        function updateLogs(logs) {
+            const list = document.getElementById('logsList');
+            const count = document.getElementById('logCount');
+
+            if (!logs || logs.length === 0) {
+                list.innerHTML = `
+                    <div class="log-entry info">
+                        <span class="log-time">--:--:--</span>
+                        <span class="log-message">Waiting for activity...</span>
+                    </div>
+                `;
+                count.textContent = '0 entries';
+                return;
+            }
+
+            count.textContent = `${logs.length} entries`;
+            list.innerHTML = logs.map(log => `
+                <div class="log-entry ${log.level}">
+                    <span class="log-time">${log.timestamp}</span>
+                    <span class="log-message">${log.message}</span>
+                </div>
+            `).join('');
+
+            list.scrollTop = list.scrollHeight;
+        }
+
+        async function runPipeline(demo = true) {
+            const btn = demo ? document.getElementById('runDemoBtn') : document.getElementById('runProdBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Running...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ demo })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to start pipeline: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                setTimeout(fetchStatus, 1000);
+            }
+        }
+
+        async function generateContent() {
+            const btn = document.getElementById('generateBtn');
+            const type = document.getElementById('contentType').value;
+            const request = document.getElementById('requestText').value;
+            const platform = document.getElementById('platform').value;
+
+            if (!request.trim()) {
+                alert('Please enter request details');
+                return;
+            }
+
+            btn.innerHTML = '<span class="spinner"></span> Generating...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, request, platform })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    currentContent = data.content;
+                    showPreview(type, data.content);
+                }
+            } catch (error) {
+                alert('Generation failed: ' + error.message);
+            } finally {
+                btn.innerHTML = 'Generate Content';
+                btn.disabled = false;
+                fetchStatus();
+            }
+        }
+
+        function showPreview(type, content) {
+            const modal = document.getElementById('previewModal');
+            const previewDiv = document.getElementById('previewContent');
+            const publishBtn = document.getElementById('publishBtn');
+
+            let html = '';
+
+            if (typeof content === 'string') {
+                html = `<div class="content-preview">
+                    <h3>Social Media Post</h3>
+                    <div class="content-text">${content}</div>
+                </div>`;
+                publishBtn.textContent = 'Post to Social Media';
+            } else if (content.title && content.content) {
+                html = `<div class="content-preview">
+                    <h3>${content.title}</h3>
+                    <div class="content-text">${content.content}</div>
+                </div>`;
+                publishBtn.textContent = 'Publish to WordPress';
+            } else if (content.headline) {
+                html = `<div class="content-preview">
+                    <h3>${content.headline}</h3>
+                    <div class="content-text">${content.description}</div>
+                    ${content.features ? '<ul>' + content.features.map(f => `<li>${f}</li>`).join('') + '</ul>' : ''}
+                </div>`;
+                publishBtn.textContent = 'Publish to WordPress';
+            }
+
+            previewDiv.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('previewModal').classList.remove('active');
+        }
+
+        async function publishContent() {
+            if (!currentContent) return;
+
+            const btn = document.getElementById('publishBtn');
+            btn.innerHTML = '<span class="spinner"></span> Publishing...';
+            btn.disabled = true;
+
+            try {
+                const platform = typeof currentContent === 'string' ? 'linkedin' : 'wordpress';
+                const content = typeof currentContent === 'string'
+                    ? { text: currentContent }
+                    : currentContent;
+
+                const response = await fetch('/api/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ platform, content })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    alert('Content published successfully!');
+                    closeModal();
+                }
+            } catch (error) {
+                alert('Publishing failed: ' + error.message);
+            } finally {
+                btn.innerHTML = 'Publish';
+                btn.disabled = false;
+                fetchStatus();
+            }
+        }
+
+        async function clearLogs() {
+            try {
+                await fetch('/api/clear-logs', { method: 'POST' });
+                fetchStatus();
+            } catch (error) {
+                console.error('Failed to clear logs:', error);
+            }
+        }
+
+        function showGenerator() {
+            document.getElementById('generatorCard').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('requestText').focus();
+        }
+    </script>
+</body>
+
+</html>

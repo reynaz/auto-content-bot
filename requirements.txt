@@ -1,0 +1,21 @@
+# Core
+python-dotenv==1.0.0
+requests==2.31.0
+
+# OpenAI
+openai==1.6.1
+
+# Gmail API
+google-api-python-client==2.108.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+
+# Social Media
+tweepy==4.14.0
+
+# Web Dashboard
+flask==3.0.0
+flask-cors==4.0.0
+
+# Email
+secure-smtplib==0.1.1
