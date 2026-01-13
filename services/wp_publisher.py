@@ -36,19 +36,19 @@ class WordPressPublisher:
             )
             if response.status_code == 200:
                 user = response.json()
-                print(f"📝 [WORDPRESS] Connected as: {user.get('name', 'User')}")
+                print(f"[WORDPRESS] Connected as: {user.get('name', 'User')}")
                 self.use_real_api = True
             else:
-                print(f"⚠️ [WORDPRESS] Connection failed (Status: {response.status_code})")
+                print(f" [WORDPRESS] Connection failed (Status: {response.status_code})")
         except Exception as e:
-            print(f"⚠️ [WORDPRESS] Connection error: {e}")
+            print(f" [WORDPRESS] Connection error: {e}")
 
     def create_draft(self, title: str, content: str, excerpt: str = "") -> str:
         """
         Create a draft post on WordPress.
         Returns the preview link.
         """
-        print(f"\n--- 📡 CONNECTING TO WORDPRESS ---")
+        print(f"\n-- CONNECTING TO WORDPRESS ---")
         print(f"Action: Create Draft Post")
         print(f"Post Title: {title}")
         
@@ -62,7 +62,7 @@ class WordPressPublisher:
         Publish a post directly to WordPress.
         Returns the public link.
         """
-        print(f"\n--- 📡 PUBLISHING TO WORDPRESS ---")
+        print(f"\n--- PUBLISHING TO WORDPRESS ---")
         print(f"Post Title: {title}")
         
         if self.use_real_api:
@@ -103,11 +103,11 @@ class WordPressPublisher:
                     print(f"🔗 Live URL: {link}")
                     return link
             else:
-                print(f"❌ [WORDPRESS] Failed: {response.status_code} - {response.text}")
+                print(f"[WORDPRESS] Failed: {response.status_code} - {response.text}")
                 return self._create_mock_post(title, status)
                 
         except Exception as e:
-            print(f"❌ [WORDPRESS] Error: {e}")
+            print(f" [WORDPRESS] Error: {e}")
             return self._create_mock_post(title, status)
 
     def _create_mock_post(self, title: str, status: str) -> str:

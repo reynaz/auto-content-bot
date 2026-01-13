@@ -51,6 +51,15 @@ class Config:
     def is_smtp_configured(cls) -> bool:
         """Check if SMTP email is properly configured."""
         return all([cls.SMTP_EMAIL, cls.SMTP_PASSWORD])
+        
+    @classmethod
+    def is_gmail_configured(cls) -> bool:
+        """
+        Check if Gmail API is configured.
+        credentials.json var mı diye bakıyoruz.
+        """
+        return os.path.exists(cls.GMAIL_CREDENTIALS_PATH)
+    
     
     @classmethod
     def is_linkedin_configured(cls) -> bool:
@@ -74,7 +83,8 @@ class Config:
             "demo_mode": cls.DEMO_MODE,
             "openai": cls.is_openai_configured(),
             "wordpress": cls.is_wordpress_configured(),
-            "smtp": cls.is_smtp_configured(),
+            "gmail": cls.is_gmail_configured(),
             "linkedin": cls.is_linkedin_configured(),
             "twitter": cls.is_twitter_configured()
-        }
+}
+
